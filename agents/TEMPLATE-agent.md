@@ -19,9 +19,11 @@ staging: _staging/weak/
 
 # Name it after the job
 
-Copy this file, fill it in, then run the checker over it:
+Copy this file, fill it in, then run the checker over it, from your CRM folder:
 
-    python agent_check.py _agents/your-file.md
+    python3 _engine/agent_check.py _agents/your-file.md
+
+(on Windows: `python _engine/agent_check.py _agents/your-file.md`)
 
 The checker will tell you which parts are missing. It never changes the file.
 
