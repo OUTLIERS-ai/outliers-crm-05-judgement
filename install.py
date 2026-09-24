@@ -24,6 +24,10 @@ import sys
 from datetime import date
 from pathlib import Path
 
+# The command a member types to start Python: `python3` on a Mac, which has no plain
+# `python` command, and `python` everywhere else, as the Windows guides print it.
+PY = "python3" if sys.platform == "darwin" else "python"
+
 LAYER = 5
 LAYER_NAME = "Judgement"
 NEEDS_LAYER = 4
@@ -299,7 +303,7 @@ in `_agents/`; the permissions are the two lists at the top of it.
 
 **Check a definition**
 
-    python _engine/agent_check.py _agents/
+    {py} _engine/agent_check.py _agents/
 
 It reports rule by rule and changes nothing.
 
@@ -324,7 +328,7 @@ verdict points, and does it ever admit it does not know.
 
 Nothing in this layer edits them. There is no code here that writes into your
 people folder, which is a stronger guarantee than a rule saying it must not.
-""".format(w=w)
+""".format(w=w, py=PY)
 
 
 def layer_note(answers, cfg):
@@ -430,7 +434,7 @@ def finish(home, answers, cfg):
     say()
     say("  Check the example assistant's definition. From inside %s:" % home)
     say()
-    say("      python _engine/agent_check.py _agents/")
+    say("      %s _engine/agent_check.py _agents/" % PY)
     say()
     say("  It reads the definition and reports rule by rule. It changes nothing.")
     say()

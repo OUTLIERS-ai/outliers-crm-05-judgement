@@ -25,6 +25,10 @@ import re
 import sys
 from pathlib import Path
 
+# The command a member types to start Python: `python3` on a Mac, which has no plain
+# `python` command, and `python` everywhere else, as the Windows guides print it.
+PY = "python3" if sys.platform == "darwin" else "python"
+
 # The keys a definition must carry in its front matter (the block between the two
 # lines of three dashes at the top of the file).
 REQUIRED_KEYS = ("agent", "job", "reads", "writes", "may-not-write",
@@ -287,7 +291,7 @@ def main(argv):
     args = [a for a in argv[1:] if not a.startswith("--")]
     as_json = "--json" in argv
     if not args:
-        print(__doc__)
+        print(__doc__.replace("    python ", "    %s " % PY))
         return 2
 
     files = []
