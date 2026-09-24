@@ -11,9 +11,9 @@ This script is the test. It reads a definition file and reports, rule by rule,
 whether the definition is usable. It never changes the file. It never runs the
 agent. It only reads what you wrote down and tells you what is missing.
 
-    python agent_check.py agents/example-fit-scorer.md
-    python agent_check.py agents/            (checks every .md in the folder)
-    python agent_check.py agents/ --json
+    python _engine/agent_check.py _agents/fit-scorer.md
+    python _engine/agent_check.py _agents/            (checks every .md in the folder)
+    python _engine/agent_check.py _agents/ --json
 
 The exit code is the number of failing rules, so another script can act on it.
 
@@ -28,6 +28,34 @@ from pathlib import Path
 # The command a member types to start Python: `python3` on a Mac, which has no plain
 # `python` command, and `python` everywhere else, as the Windows guides print it.
 PY = "python3" if sys.platform == "darwin" else "python"
+
+
+def _typed(name):
+    """The program `name` (it sits beside this file) as the member types it from the folder
+    they are in: `_engine/<name>` from the CRM folder, `<name>` from inside `_engine`."""
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+    try:
+        typed = os.path.relpath(path)
+    except ValueError:                      # the member is on another drive
+        typed = path
+    if typed.startswith(".."):
+        typed = path
+    typed = typed.replace("\\", "/")
+    return '"%s"' % typed if " " in typed else typed
+
+
+def _agents_typed():
+    """The CRM's `_agents` folder as the member types it from the folder they are in:
+    `_agents` from the CRM folder, `../_agents` from inside `_engine`."""
+    import os
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "_agents")
+    try:
+        typed = os.path.relpath(path)
+    except ValueError:                      # the member is on another drive
+        typed = path
+    typed = typed.replace("\\", "/")
+    return '"%s"' % typed if " " in typed else typed
 
 # The keys a definition must carry in its front matter (the block between the two
 # lines of three dashes at the top of the file).
@@ -291,7 +319,9 @@ def main(argv):
     args = [a for a in argv[1:] if not a.startswith("--")]
     as_json = "--json" in argv
     if not args:
-        print(__doc__.replace("    python ", "    %s " % PY))
+        print(__doc__.replace("    python _engine/agent_check.py", "    python " + _typed("agent_check.py"))
+              .replace(" _agents/", " %s/" % _agents_typed())
+              .replace("    python ", "    %s " % PY))
         return 2
 
     files = []
